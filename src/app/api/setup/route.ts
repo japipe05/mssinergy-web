@@ -15,6 +15,8 @@ export async function GET() {
 
     return NextResponse.json({ message: 'Tabla usuario creada exitosamente' });
   } catch (error) {
-    return NextResponse.json({ error: (error as any).message }, { status: 500 });
+    const message = error instanceof Error ? error.message : 'Error desconocido';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
+  
 }
