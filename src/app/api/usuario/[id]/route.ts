@@ -9,14 +9,11 @@ type Usuario = {
   creado_en: string;
 };
 
-interface Context {
-  params: {
-    id: string;
-  };
-}
-
-export async function GET(request: NextRequest, context: Context) {
-  const { id } = context.params;
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
 
   try {
     const [rows] = await db.query<Usuario[]>('SELECT * FROM usuario WHERE id = ?', [id]);
@@ -32,8 +29,11 @@ export async function GET(request: NextRequest, context: Context) {
   }
 }
 
-export async function PUT(request: NextRequest, context: Context) {
-  const { id } = context.params;
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
 
   try {
     const { nombre, correo, password } = await request.json();
@@ -50,8 +50,11 @@ export async function PUT(request: NextRequest, context: Context) {
   }
 }
 
-export async function DELETE(request: NextRequest, context: Context) {
-  const { id } = context.params;
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
 
   try {
     await db.query('DELETE FROM usuario WHERE id = ?', [id]);
