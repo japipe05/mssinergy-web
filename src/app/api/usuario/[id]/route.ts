@@ -16,7 +16,7 @@ export async function GET(
   const { id } = await params;
 
   try {
-    const [rows] = await db.query<Usuario[]>('SELECT * FROM usuario WHERE id = ?', [id]);
+    const [rows] = await db.query('SELECT * FROM usuario WHERE id = ?', [id]) as [Usuario[]];
 
     if (rows.length === 0) {
       return NextResponse.json({ message: 'No encontrado' }, { status: 404 });
