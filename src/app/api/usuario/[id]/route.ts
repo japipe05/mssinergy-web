@@ -2,13 +2,24 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 
+type Usuario = {
+  id: number;
+  nombre: string;
+  correo: string;
+  password: string;
+  creado_en: string; // o Date, según tu base de datos
+};
+
 export async function GET(_: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const [rows] = await db.query('SELECT * FROM usuario WHERE id = ?', [params.id]);
-    if ((rows as any).length === 0) return NextResponse.json({ message: 'No encontrado' }, { status: 404 });
+    const [rows] = await db.query<Usuario[]>('SELECT * FROM usuario WHERE id = ?', [params.id]);
+    if (rows.length === 0) {
+      return NextResponse.json({ message: 'No encontrado' }, { status: 404 });
+    }
     return NextResponse.json(rows[0]);
   } catch (error) {
-    return NextResponse.json({ error: (error as any).message }, { status: 500 });
+    const message = error instanceof Error ? error.message : 'Error desconocido';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
 
@@ -22,7 +33,8 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     );
     return NextResponse.json({ message: 'Usuario actualizado' });
   } catch (error) {
-    return NextResponse.json({ error: (error as any).message }, { status: 500 });
+    const message = error instanceof Error ? error.message : 'Error desconocido';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
 
@@ -31,6 +43,7 @@ export async function DELETE(_: NextRequest, { params }: { params: { id: string 
     await db.query('DELETE FROM usuario WHERE id = ?', [params.id]);
     return NextResponse.json({ message: 'Usuario eliminado' });
   } catch (error) {
-    return NextResponse.json({ error: (error as any).message }, { status: 500 });
+    const message = error instanceof Error ? error.message : 'Error desconocido';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
