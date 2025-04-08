@@ -24,5 +24,6 @@ jobs:
         env:
           REPO: self
           BRANCH: build # crea esa nueva rama donde se desplega el proyecto          FOLDER: build # directorio que se va a subir 
+          folder: build 
           GITHUB_TOKEN: ${{ secrets.TOKEN_PERSONAL_CLASIC }} # GitHub will automatically add this - you don't need to bother getting a token
           MESSAGE: "Build: ({sha}) {msg}" # The commit message creando prueba
