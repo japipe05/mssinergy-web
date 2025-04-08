@@ -21,11 +21,11 @@ jobs:
 
       - name: Push static export to 'build' branch
         uses: s0/git-publish-subdir-action@develop
-        with:
-          branch: build
-          folder: out
-          message: "Build: ({sha}) {msg}"
         env:
           REPO: self
+          BRANCH: build
+          FOLDER: out
           GITHUB_TOKEN: ${{ secrets.TOKEN_PERSONAL_CLASIC }}
+          MESSAGE: "Build: ({sha}) {msg}"
+
 
