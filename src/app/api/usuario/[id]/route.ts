@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { RowDataPacket } from 'mysql2/promise';
-
 type Usuario = {
   id: number;
   nombre: string;
@@ -10,12 +9,11 @@ type Usuario = {
   creado_en: string;
 };
 
-interface Params {
-  params: { id: string };
-}
-
-export async function GET(_: NextRequest, { params }: Params) {
-  const { id } = params;
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
 
   try {
     const [rows] = await db.query<RowDataPacket[]>('SELECT * FROM usuario WHERE id = ?', [id]);
@@ -32,11 +30,14 @@ export async function GET(_: NextRequest, { params }: Params) {
   }
 }
 
-export async function PUT(req: NextRequest, { params }: Params) {
-  const { id } = params;
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
 
   try {
-    const { nombre, correo, password } = await req.json();
+    const { nombre, correo, password } = await request.json();
 
     await db.query(
       'UPDATE usuario SET nombre = ?, correo = ?, password = ? WHERE id = ?',
@@ -50,11 +51,15 @@ export async function PUT(req: NextRequest, { params }: Params) {
   }
 }
 
-export async function DELETE(_: NextRequest, { params }: Params) {
-  const { id } = params;
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
 
   try {
     await db.query('DELETE FROM usuario WHERE id = ?', [id]);
+
     return NextResponse.json({ message: 'Usuario eliminado' });
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Error desconocido';
