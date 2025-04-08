@@ -9,12 +9,11 @@ type Usuario = {
   creado_en: string;
 };
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: NextRequest, context: any) {
+  const { id } = context.params;
+
   try {
-    const [rows] = await db.query<Usuario[]>('SELECT * FROM usuario WHERE id = ?', [params.id]);
+    const [rows] = await db.query<Usuario[]>('SELECT * FROM usuario WHERE id = ?', [id]);
 
     if (rows.length === 0) {
       return NextResponse.json({ message: 'No encontrado' }, { status: 404 });
@@ -27,16 +26,15 @@ export async function GET(
   }
 }
 
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PUT(request: NextRequest, context: any) {
+  const { id } = context.params;
+
   try {
     const { nombre, correo, password } = await request.json();
 
     await db.query(
       'UPDATE usuario SET nombre = ?, correo = ?, password = ? WHERE id = ?',
-      [nombre, correo, password, params.id]
+      [nombre, correo, password, id]
     );
 
     return NextResponse.json({ message: 'Usuario actualizado' });
@@ -46,12 +44,11 @@ export async function PUT(
   }
 }
 
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(request: NextRequest, context: any) {
+  const { id } = context.params;
+
   try {
-    await db.query('DELETE FROM usuario WHERE id = ?', [params.id]);
+    await db.query('DELETE FROM usuario WHERE id = ?', [id]);
 
     return NextResponse.json({ message: 'Usuario eliminado' });
   } catch (error) {
