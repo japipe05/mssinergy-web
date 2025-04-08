@@ -9,7 +9,13 @@ type Usuario = {
   creado_en: string;
 };
 
-export async function GET(request: NextRequest, context: any) {
+interface Context {
+  params: {
+    id: string;
+  };
+}
+
+export async function GET(request: NextRequest, context: Context) {
   const { id } = context.params;
 
   try {
@@ -26,7 +32,7 @@ export async function GET(request: NextRequest, context: any) {
   }
 }
 
-export async function PUT(request: NextRequest, context: any) {
+export async function PUT(request: NextRequest, context: Context) {
   const { id } = context.params;
 
   try {
@@ -44,7 +50,7 @@ export async function PUT(request: NextRequest, context: any) {
   }
 }
 
-export async function DELETE(request: NextRequest, context: any) {
+export async function DELETE(request: NextRequest, context: Context) {
   const { id } = context.params;
 
   try {
