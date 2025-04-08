@@ -11,11 +11,10 @@ type Usuario = {
 
 export async function GET(
   request: NextRequest,
-  context: { params: Record<string, string> }
+  { params }: { params: { id: string } }
 ) {
   try {
-    const id = context.params.id;
-    const [rows] = await db.query<Usuario[]>('SELECT * FROM usuario WHERE id = ?', [id]);
+    const [rows] = await db.query<Usuario[]>('SELECT * FROM usuario WHERE id = ?', [params.id]);
 
     if (rows.length === 0) {
       return NextResponse.json({ message: 'No encontrado' }, { status: 404 });
@@ -30,15 +29,14 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  context: { params: Record<string, string> }
+  { params }: { params: { id: string } }
 ) {
   try {
     const { nombre, correo, password } = await request.json();
-    const id = context.params.id;
 
     await db.query(
       'UPDATE usuario SET nombre = ?, correo = ?, password = ? WHERE id = ?',
-      [nombre, correo, password, id]
+      [nombre, correo, password, params.id]
     );
 
     return NextResponse.json({ message: 'Usuario actualizado' });
@@ -50,11 +48,10 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  context: { params: Record<string, string> }
+  { params }: { params: { id: string } }
 ) {
   try {
-    const id = context.params.id;
-    await db.query('DELETE FROM usuario WHERE id = ?', [id]);
+    await db.query('DELETE FROM usuario WHERE id = ?', [params.id]);
 
     return NextResponse.json({ message: 'Usuario eliminado' });
   } catch (error) {
