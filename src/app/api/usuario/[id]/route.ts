@@ -1,4 +1,3 @@
-// src/app/api/usuario/[id]/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 
@@ -7,12 +6,18 @@ type Usuario = {
   nombre: string;
   correo: string;
   password: string;
-  creado_en: string; // o Date, según tu base de datos
+  creado_en: string;
 };
 
-export async function GET(_: NextRequest, { params }: { params: { id: string } }) {
+type RouteContext = {
+  params: {
+    id: string;
+  };
+};
+
+export async function GET(_: NextRequest, context: RouteContext) {
   try {
-    const [rows] = await db.query<Usuario[]>('SELECT * FROM usuario WHERE id = ?', [params.id]);
+    const [rows] = await db.query<Usuario[]>('SELECT * FROM usuario WHERE id = ?', [context.params.id]);
     if (rows.length === 0) {
       return NextResponse.json({ message: 'No encontrado' }, { status: 404 });
     }
@@ -23,13 +28,13 @@ export async function GET(_: NextRequest, { params }: { params: { id: string } }
   }
 }
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest, context: RouteContext) {
   const { nombre, correo, password } = await req.json();
 
   try {
     await db.query(
       'UPDATE usuario SET nombre = ?, correo = ?, password = ? WHERE id = ?',
-      [nombre, correo, password, params.id]
+      [nombre, correo, password, context.params.id]
     );
     return NextResponse.json({ message: 'Usuario actualizado' });
   } catch (error) {
@@ -38,9 +43,9 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
   }
 }
 
-export async function DELETE(_: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(_: NextRequest, context: RouteContext) {
   try {
-    await db.query('DELETE FROM usuario WHERE id = ?', [params.id]);
+    await db.query('DELETE FROM usuario WHERE id = ?', [context.params.id]);
     return NextResponse.json({ message: 'Usuario eliminado' });
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Error desconocido';
