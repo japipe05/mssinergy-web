@@ -3,7 +3,7 @@ name: Generate a build and push to another branch
 on:
   push:
     branches:
-      - main
+      - master # Cambia esto por la rama que quieras que dispare el flujo de trabajo
 
 jobs:
   build:
